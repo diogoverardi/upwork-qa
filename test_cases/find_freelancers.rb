@@ -1,13 +1,70 @@
 require_relative '../resources/driver/initializer'
-require_relative '../resources/pages/base_page'
+require_relative '../resources/pages/home_page'
+require_relative '../resources/pages/profiles_browse'
+require_relative '../resources/pages/profile_user'
+
+
+
+##############################################################################
+# Test case
+#
+# Run <browser>(dynamic)
+#
+# Clear <browser> cookies
+#
+# Go to www.upwork.com
+#
+# Focus onto "Find freelancers"
+#
+# Enter <keyword>(dynamic) into the search input right from the dropdown and submit it (click on the magnifying glass button)
+#
+# Parse the 1st page with search results: store info given on the 1st page of search results as structured data of any chosen by you type (i.e. hash of hashes or array of hashes, whatever structure handy to be parsed).
+#
+# Make sure at least one attribute (title, overview, skills, etc) of each item (found freelancer) from parsed search results contains <keyword> Log in stdout
+# which freelancers and attributes contain <keyword> and which do not.
+#
+# Click on random freelancer's title
+#
+# Get into that freelancer's profile
+#
+# Check that each attribute value is equal to one of those stored in the structure created in #67
+#
+# Check whether at least one attribute contains <keyword>
+##############################################################################
 
 
 # initialize the browser driver
 browser = Initializer.init_browser(:firefox)
 
-base_page = BasePage.new(browser)
+# creates an instance of the home_page
+page = HomePage.new browser
 
-base_page.delete_all_cookies
+# delete all browser cookies
+page.delete_all_cookies
 
-# goes to the homepage
-home_page = base_page.get_page 'http://upwork.com'
+# goes to url
+page.get_page 'http://www.upwork.com'
+
+# search for profiles with specific keyword
+page.search_for_freelancers 'magento'
+
+
+
+profiles_search_page = ProfilesBrowse.new browser
+
+# parse profiles results
+search_results = profiles_search_page.parse_results
+
+# check which profiles have the keyword on it
+profiles_search_page.verify_profiles_with_keyword 'magento'
+
+# click on a random profile and get into it
+profiles_search_page.click_on_profile_by_name
+
+
+
+
+profile_user_page = ProfileUser.new browser
+
+# Check that each attribute value is equal to one of those stored in the structure created in #67
+profile_user_page.verify_data_from_search search_results

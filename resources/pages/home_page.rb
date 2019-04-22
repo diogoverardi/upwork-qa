@@ -1,13 +1,25 @@
-require_relative '../locators/home_page'
-
+require_relative 'base_page'
 
 class HomePage < BasePage
 
-  search_navbar_button = { :css => 'div.navbar-form > form > div.input-group.input-group-search-dropdown.input-group-navbar' }
+  NAVBAR_SEARCH_INPUT_LOCATOR   = { css: '#layout > nav > div > div.navbar-collapse.d-none.d-lg-flex > div.navbar-form > form > div.input-group.input-group-search-dropdown.input-group-navbar > input.form-control' }.freeze
+  NAVBAR_SEARCH_BUTTON_LOCATOR  = { css: '#layout > nav > div > div.navbar-collapse.d-none.d-lg-flex > div.navbar-form > form > div.input-group.input-group-search-dropdown.input-group-navbar > div > button.btn.p-0-left-right' }.freeze
 
-  def focus_onto_searchbar
-    BasePage.click focus_onto_searchbar
+  def search_for_freelancers(keyword)
+    focus_onto_search_input
+    search_for_keyword keyword
+    wait 1
+    click NAVBAR_SEARCH_BUTTON_LOCATOR
+    wait 4
+  end
 
+  def focus_onto_search_input
+    click NAVBAR_SEARCH_INPUT_LOCATOR
+    wait 1
+  end
+
+  def search_for_keyword(keyword)
+    find_and_type NAVBAR_SEARCH_INPUT_LOCATOR, keyword
   end
 
 end
