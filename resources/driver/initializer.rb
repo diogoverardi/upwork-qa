@@ -4,12 +4,12 @@ require_relative '../log/log'
 class Initializer
 
   def self.init_browser(browser)
-    Log.warning browser
+    Log.step "Initializing #{browser} browser"
 
     driver = Selenium::WebDriver.for browser
     driver.manage.timeouts.implicit_wait = 10
 
-    return driver
+    driver
   end
 
 end
