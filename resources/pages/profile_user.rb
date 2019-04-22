@@ -1,5 +1,8 @@
 require_relative 'base_page'
 
+##
+# Class responsible for all interactions in the Profile Page
+# for both Freelancer or Company type of user
 class ProfileUser < BasePage
 
   def initialize(browser)
@@ -20,31 +23,48 @@ class ProfileUser < BasePage
 
 
   def verify_data_from_search(search_results)
-    profile_page        = get_profile_page_data
+    profile_page        = get_profile_page_attributes
     profile_from_search = get_profile_from_search search_results, profile_page[:name]
 
+    Log.step "Comparing data between Profile Page and Search Page for '#{profile_page[:name]}' "
+
     profile_page.each do |key, value|
-      print key
-      print value
-      print '--dv--'
+
+      if value == profile_from_search[key]
+        message = "The data '#{key}' matches the one shown in the search"
+      else
+        message = "The data '#{key}' is different from the search | profile: #{value} | search: #{profile_from_search[key]}"
+      end
+
+      Log.info message
+
+      # main_profile = "#{key} -> #{value}"
+      # print "current_profile_page: #{main_profile} \n "
+      #
+      # search_profile = "#{profile_from_search[key]}"
+      # print "profile from search: #{search_profile} \n"
+      #
+      # print "-----"
+
     end
 
   end
 
-  #TODO: remove the @browser parameter
-  #TODO: is_a_company_page is called 4 times, make it just one
-  def get_profile_page_data
+  # Assemble a key-value array containing the profile attributes
+  # and Returns it
+  def get_profile_page_attributes
+    is_company = is_a_company_page
     {
-        name:         get_element_text((is_a_company_page ? COMPANY_NAME_LOCATOR    : PROFILE_NAME_LOCATOR), @browser),
-        title:        get_element_text((is_a_company_page ? COMPANY_TITLE_LOCATOR   : PROFILE_TITLE_LOCATOR), @browser),
-        country:      get_element_text((is_a_company_page ? COMPANY_COUNTRY_LOCATOR : PROFILE_COUNTRY_LOCATOR), @browser),
-        rate:         get_element_text((is_a_company_page ? COMPANY_RATE_LOCATOR    : PROFILE_RATE_LOCATOR), @browser)
+        name:         get_element_text((is_company ? COMPANY_NAME_LOCATOR    : PROFILE_NAME_LOCATOR)),
+        title:        get_element_text((is_company ? COMPANY_TITLE_LOCATOR   : PROFILE_TITLE_LOCATOR)),
+        country:      get_element_text((is_company ? COMPANY_COUNTRY_LOCATOR : PROFILE_COUNTRY_LOCATOR)),
+        rate:         get_element_text((is_company ? COMPANY_RATE_LOCATOR    : PROFILE_RATE_LOCATOR))
     }
   end
 
-  #TODO: remove the log
+  # Returns true(bool) if the current profile page
+  # is a company page, false(bool) otherwise
   def is_a_company_page
-    Log.info get_current_url
     if get_current_url.include? 'companies'
       true
     else
@@ -52,7 +72,8 @@ class ProfileUser < BasePage
     end
   end
 
-
+  # Finds a profile in the search result by it's name
+  # Returns the profile if found, false(bool) otherwise
   def get_profile_from_search(search_results, name)
     search_results.each do |profile|
 
@@ -61,6 +82,8 @@ class ProfileUser < BasePage
       end
 
     end
+
+    false
   end
 
 end
