@@ -54,4 +54,9 @@ class BasePage
     Log.step "Typing '#{text}' onto element: '#{locator}' "
   end
 
+  # get the current url
+  def get_current_url
+    @browser.current_url
+  end
+
 end
