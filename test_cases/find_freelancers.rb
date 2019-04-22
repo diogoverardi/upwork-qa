@@ -65,6 +65,10 @@ profiles_search_page.click_on_profile_by_name
 
 
 profile_user_page = ProfileUser.new browser
-
-# Check that each attribute value is equal to one of those stored in the structure created in #67
+# profile_user_page.is_a_company_page
 profile_user_page.verify_data_from_search search_results
+# Check that each attribute value is equal to one of those stored in the structure created in #67
+# profile_user_page.verify_data_from_search search_results
+#
+#
+# TODO: add close broswer and log final report

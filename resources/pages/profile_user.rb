@@ -20,18 +20,26 @@ class ProfileUser < BasePage
 
 
   def verify_data_from_search(search_results)
+    profile_page        = get_profile_page_data
+    profile_from_search = get_profile_from_search search_results, profile_page[:name]
+
+    profile_page.each do |key, value|
+      print key
+      print value
+      print '--dv--'
+    end
 
   end
 
   #TODO: remove the @browser parameter
-  def map_profile_page
-    profile_page_data = {
+  #TODO: is_a_company_page is called 4 times, make it just one
+  def get_profile_page_data
+    {
         name:         get_element_text((is_a_company_page ? COMPANY_NAME_LOCATOR    : PROFILE_NAME_LOCATOR), @browser),
         title:        get_element_text((is_a_company_page ? COMPANY_TITLE_LOCATOR   : PROFILE_TITLE_LOCATOR), @browser),
         country:      get_element_text((is_a_company_page ? COMPANY_COUNTRY_LOCATOR : PROFILE_COUNTRY_LOCATOR), @browser),
         rate:         get_element_text((is_a_company_page ? COMPANY_RATE_LOCATOR    : PROFILE_RATE_LOCATOR), @browser)
     }
-    puts profile_page_data
   end
 
   #TODO: remove the log
@@ -41,6 +49,17 @@ class ProfileUser < BasePage
       true
     else
       false
+    end
+  end
+
+
+  def get_profile_from_search(search_results, name)
+    search_results.each do |profile|
+
+      if profile[:name] == name
+        return profile
+      end
+
     end
   end
 
