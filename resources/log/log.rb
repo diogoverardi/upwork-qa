@@ -6,25 +6,28 @@ class Log
   @log.level            = Logger::INFO
   @log.datetime_format  = '%d-%m-%Y (%H:%M:%S) - '
 
-  @step_count = 1
+  @step_count   = 1
+  @error_count  = 0
 
-  # used for logging the test-case step
+  # Logs a message with a step count
+  # so it's easier to trace the test-case
   def self.step(message)
-    self.info "STEP #{@step_count} - #{message}"
-    @step_count += @step_count
+    self.info " \n ------------------ \n STEP #{@step_count} - #{message} \n ------------------"
+    @step_count += 1
   end
 
-  # log warn message
+  # Log a warn message
   def self.warning(message)
     @log.warn message
   end
 
-  # log an error message
+  # Log an error message
   def self.error(message)
     @log.error message
+    @error_count += 1
   end
 
-  # log info messages
+  # Log info messages
   def self.info(message)
     @log.info message
   end
