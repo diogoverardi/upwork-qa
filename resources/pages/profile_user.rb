@@ -23,4 +23,25 @@ class ProfileUser < BasePage
 
   end
 
+  #TODO: remove the @browser parameter
+  def map_profile_page
+    profile_page_data = {
+        name:         get_element_text((is_a_company_page ? COMPANY_NAME_LOCATOR    : PROFILE_NAME_LOCATOR), @browser),
+        title:        get_element_text((is_a_company_page ? COMPANY_TITLE_LOCATOR   : PROFILE_TITLE_LOCATOR), @browser),
+        country:      get_element_text((is_a_company_page ? COMPANY_COUNTRY_LOCATOR : PROFILE_COUNTRY_LOCATOR), @browser),
+        rate:         get_element_text((is_a_company_page ? COMPANY_RATE_LOCATOR    : PROFILE_RATE_LOCATOR), @browser)
+    }
+    puts profile_page_data
+  end
+
+  #TODO: remove the log
+  def is_a_company_page
+    Log.info get_current_url
+    if get_current_url.include? 'companies'
+      true
+    else
+      false
+    end
+  end
+
 end
