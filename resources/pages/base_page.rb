@@ -2,7 +2,7 @@ require_relative '../log/log'
 
 ##
 # Class that all pages should inherit from
-# it contains basic methods that all the other pages will use
+# it contains basic methods that all the other pages will use it
 class BasePage
 
   attr_accessor :browser
@@ -62,6 +62,12 @@ class BasePage
   # Returns the current browser url
   def get_current_url
     @browser.current_url
+  end
+
+  # Close the browser
+  def quit
+    @browser.quit
+    Log.step 'Closing the browser...'
   end
 
 end
