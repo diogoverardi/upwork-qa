@@ -1,15 +1,18 @@
 require_relative 'base_page'
+require_relative '../helper/profile'
 
 ##
 # Class responsible for all interactions in the Profile Page
 # for both Freelancer or Company type of user
 class ProfileUser < BasePage
+  include ProfileHelper
 
   def initialize(browser)
     @browser = browser
+    @profile = []
   end
 
-  # LOCATORS
+  # Locators
   # the locators change if a profile belongs to a company
   PROFILE_NAME_LOCATOR          = { css: '#optimizely-header-container-default > div.row.m-lg-bottom > div.col-xs-12.col-sm-8.col-md-9.col-lg-10 > div > div.media-body > h2 > span' }.freeze
   PROFILE_TITLE_LOCATOR         = { css: '#optimizely-header-container-default > div.overlay-container > div:nth-child(1) > h3 > span > span.ng-binding' }.freeze
@@ -28,6 +31,11 @@ class ProfileUser < BasePage
 
     Log.step "Comparing data between Profile Page and Search Page for '#{profile_page[:name]}' "
 
+    # Adds just one profile to a list so it can
+    # compare it later with a given keyword
+    @profile << profile_page
+
+    # Verify if the attribute is the same from the search page
     profile_page.each do |key, value|
 
       if value == profile_from_search[key]
@@ -37,15 +45,6 @@ class ProfileUser < BasePage
       end
 
       Log.info message
-
-      # main_profile = "#{key} -> #{value}"
-      # print "current_profile_page: #{main_profile} \n "
-      #
-      # search_profile = "#{profile_from_search[key]}"
-      # print "profile from search: #{search_profile} \n"
-      #
-      # print "-----"
-
     end
 
   end
@@ -60,6 +59,11 @@ class ProfileUser < BasePage
         country:      get_element_text((is_company ? COMPANY_COUNTRY_LOCATOR : PROFILE_COUNTRY_LOCATOR)),
         rate:         get_element_text((is_company ? COMPANY_RATE_LOCATOR    : PROFILE_RATE_LOCATOR))
     }
+  end
+
+  def verify_keyword_on_profile(keyword)
+    Log.step "Verifying all attributes on Profile Page for matching keyword: #{keyword}"
+    verify_profiles_with_keyword @profile, keyword
   end
 
   # Returns true(bool) if the current profile page
