@@ -1,8 +1,10 @@
 require_relative 'base_page'
+require_relative '../helper/profile'
 
 ##
-# Class responsible for interactions in the Freelancer Search Page
+# Class responsible for all interactions in the Freelancer Search Page
 class ProfilesBrowse < BasePage
+  include ProfileHelper
 
   def initialize(browser)
     @browser        = browser
@@ -50,40 +52,9 @@ class ProfilesBrowse < BasePage
     wait 5
   end
 
-  def verify_profiles_with_keyword(keyword)
-    Log.step "Verifying all profiles for matching keyword: #{keyword}"
-
-    # makes the keyword string downcase for comparison
-    keyword = keyword.downcase
-
-    # iterates each profile in the search result
-    @profiles_data.each do |profile|
-
-      Log.info "||||||||||"
-      Log.info "Searching '#{profile[:name]}'"
-
-      # iterate all the data inside each profile
-      profile.each do |key, value|
-
-        # don't verify the keyword on the profile's name
-        if key == :name
-          next
-        end
-
-        # downcase the string for more accurate comparison
-        value = value.downcase
-
-        # check whether the current profile data contains the keyword in it
-        if value.include? keyword
-          Log.info "#{key} does include the keyword"
-        else
-          Log.info "#{key} does not include the keyword"
-        end
-
-      end
-
-    end
-
+  def verify_keyword_on_profiles(keyword)
+    Log.step "Verifying all profiles on Search Page for matching keyword: #{keyword}"
+    verify_profiles_with_keyword @profiles_data, keyword
   end
 
 end
