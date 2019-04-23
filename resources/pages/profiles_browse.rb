@@ -4,6 +4,9 @@ require_relative '../helper/profile'
 ##
 # Class responsible for all interactions in the Freelancer Search Page
 class ProfilesBrowse < BasePage
+
+  # This will include the Module into this class
+  # (not a inheritance)
   include ProfileHelper
 
   def initialize(browser)
@@ -29,12 +32,12 @@ class ProfilesBrowse < BasePage
     profiles_array = find_elements PROFILE_CARD_SECTION_LOCATOR
     profiles_array.each do |profile|
       @profiles_data <<
-          {
-              name:         get_element_text(PROFILE_NAME_LOCATOR, profile),
-              title:        get_element_text(PROFILE_TITLE_LOCATOR, profile),
-              country:      get_element_text(PROFILE_COUNTRY_LOCATOR, profile),
-              rate:         get_element_text(PROFILE_RATE_LOCATOR, profile)
-          }
+        {
+          name:         get_element_text(PROFILE_NAME_LOCATOR, profile),
+          title:        get_element_text(PROFILE_TITLE_LOCATOR, profile),
+          country:      get_element_text(PROFILE_COUNTRY_LOCATOR, profile),
+          rate:         get_element_text(PROFILE_RATE_LOCATOR, profile)
+        }
     end
     @profiles_data
   end

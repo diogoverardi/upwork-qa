@@ -5,6 +5,9 @@ require_relative '../helper/profile'
 # Class responsible for all interactions in the Profile Page
 # for both Freelancer or Company type of user
 class ProfileUser < BasePage
+
+  # This will include the Module into this class
+  # (not a inheritance)
   include ProfileHelper
 
   def initialize(browser)
@@ -25,7 +28,7 @@ class ProfileUser < BasePage
   COMPANY_RATE_LOCATOR          = { css: '#main > div.ng-scope > div > div > div.row > div.col-md-9 > div > div.air-card.m-0-top-bottom > div.row > div:nth-child(1) > h4 > span' }.freeze
 
 
-  def verify_data_from_search(search_results)
+  def verify_attributes_from_search(search_results)
     profile_page        = get_profile_page_attributes
     profile_from_search = get_profile_from_search search_results, profile_page[:name]
 
@@ -39,9 +42,9 @@ class ProfileUser < BasePage
     profile_page.each do |key, value|
 
       if value == profile_from_search[key]
-        message = "The data '#{key}' matches the one shown in the search"
+        message = "The attribute '#{key}' matches the one shown in the search"
       else
-        message = "The data '#{key}' is different from the search | profile: #{value} | search: #{profile_from_search[key]}"
+        message = "The attribute '#{key}' is different from the search | profile: #{value} | search: #{profile_from_search[key]}"
       end
 
       Log.info message

@@ -1,5 +1,7 @@
 require 'logger'
 
+##
+# Class that contains the Log methods/interactions
 class Log
 
   @log                  = Logger.new(STDOUT)

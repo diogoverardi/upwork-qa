@@ -5,6 +5,7 @@ require_relative '../log/log'
 # it contains basic methods that all the other pages will use it
 class BasePage
 
+  # Makes this variable accept writing/reading
   attr_accessor :browser
 
   def initialize(browser)

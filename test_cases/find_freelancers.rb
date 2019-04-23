@@ -4,9 +4,6 @@ require_relative '../resources/pages/profiles_browse'
 require_relative '../resources/pages/profile_user'
 require_relative '../resources/config/find_freelancers'
 
-# ruby test_cases/find_freelancers.rb "chrome" "selenium"
-
-
 ##############################################################################
 # Test case
 #
@@ -33,8 +30,6 @@ require_relative '../resources/config/find_freelancers'
 #
 # Check whether at least one attribute contains <keyword>
 ##############################################################################
-#
-#
 
 
 # Set the browser and keyword to be used on this session
@@ -83,7 +78,7 @@ profiles_search_page.click_on_profile_by_name
 profile_user_page = ProfileUser.new browser
 
 # Check that each attribute value is equal to one of those stored in the structure created in #67
-profile_user_page.verify_data_from_search search_results
+profile_user_page.verify_attributes_from_search search_results
 
 # Check whether at least one attribute contains <keyword>
 profile_user_page.verify_keyword_on_profile keyword
