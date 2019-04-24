@@ -35,7 +35,7 @@ require_relative '../resources/config/find_freelancers'
 # Set the browser and keyword to be used on this session
 def get_browser(browser)
   if browser == 'chrome'
-    :chrome
+    return :chrome
   end
   :firefox
 end
