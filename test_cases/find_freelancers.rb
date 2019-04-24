@@ -86,4 +86,6 @@ profile_user_page.verify_keyword_on_profile keyword
 # ends the test-case
 profile_user_page.quit
 
-# TODO: log final report, like errors, count steps, stuff like that
+
+# Print the Log counts
+Log.print_counts
