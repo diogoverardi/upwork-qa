@@ -21,6 +21,9 @@ class ProfileUser < BasePage
   PROFILE_TITLE_LOCATOR         = { css: '#optimizely-header-container-default > div.overlay-container > div:nth-child(1) > h3 > span > span.ng-binding' }.freeze
   PROFILE_COUNTRY_LOCATOR       = { css: '#optimizely-header-container-default > div.row.m-lg-bottom > div.col-xs-12.col-sm-8.col-md-9.col-lg-10 > div > div.media-body > div.fe-profile-header-local-time > fe-profile-map > span > ng-transclude > fe-profile-location-label > span.w-700 > span:nth-child(2)' }.freeze
   PROFILE_RATE_LOCATOR          = { css: '#optimizely-header-container-default > div.m-lg-top.cfe-aggregates > ul > li:nth-child(1) > div.up-active-container.ng-scope > div > h3 > cfe-profile-rate > span > span' }.freeze
+  PROFILE_SKILLS_LOCATOR        = { css: 'div.o-profile-skills a' }.freeze
+
+  GENERAL_PROFILE_BUTTON_LOCATOR = { css: 'button[data-ng-click="$ctrl.selectGeneralProfile()"]' }.freeze
 
   COMPANY_NAME_LOCATOR          = { css: '#main > div.ng-scope > div > div > div.row > div.col-md-9 > div > div.air-card.m-0-top-bottom > div.media > div.media-body > h2' }.freeze
   COMPANY_TITLE_LOCATOR         = { css: '#main > div.ng-scope > div > div > div.row > div.col-md-9 > div > div.air-card.m-0-top-bottom > h3' }.freeze
@@ -28,7 +31,13 @@ class ProfileUser < BasePage
   COMPANY_RATE_LOCATOR          = { css: '#main > div.ng-scope > div > div > div.row > div.col-md-9 > div > div.air-card.m-0-top-bottom > div.row > div:nth-child(1) > h4 > span' }.freeze
 
 
+  # Compares the profile attributes between profile page and search page
+  # and log the results
   def verify_attributes_from_search(search_results)
+    # click in the general profile button
+    # if there's one
+    goes_to_general_profile
+
     profile_page        = get_profile_page_attributes
     profile_from_search = get_profile_from_search search_results, profile_page[:name]
 
@@ -41,6 +50,13 @@ class ProfileUser < BasePage
     # Verify if the attribute is the same from the search page
     profile_page.each do |key, value|
 
+      # Calls a specific method for comparing the skills attribute
+      if key == :skills
+        compare_profile_skills profile_from_search[key], value
+        next
+      end
+
+      # Compare the attributes
       if value == profile_from_search[key]
         message = "The attribute '#{key}' matches the one shown in the search"
       else
@@ -52,21 +68,48 @@ class ProfileUser < BasePage
 
   end
 
+  # Compare skills between the profile and search page
+  # and log the skills that weren't on both pages
+  def compare_profile_skills(search_skills, profile_page_skills)
+    non_matching_skills = profile_page_skills - search_skills
+
+    if non_matching_skills
+      Log.info "These skills where not in the search #{non_matching_skills}"
+    end
+  end
+
+  # Clicks on the general profile button
+  # if it's being displayed
+  def goes_to_general_profile
+    if is_displayed GENERAL_PROFILE_BUTTON_LOCATOR
+      click GENERAL_PROFILE_BUTTON_LOCATOR
+      wait 1
+    end
+  end
+
   # Assemble a key-value array containing the profile attributes
   # and Returns it
   def get_profile_page_attributes
     is_company = is_a_company_page
     {
-        name:         get_element_text((is_company ? COMPANY_NAME_LOCATOR    : PROFILE_NAME_LOCATOR)),
-        title:        get_element_text((is_company ? COMPANY_TITLE_LOCATOR   : PROFILE_TITLE_LOCATOR)),
-        country:      get_element_text((is_company ? COMPANY_COUNTRY_LOCATOR : PROFILE_COUNTRY_LOCATOR)),
-        rate:         get_element_text((is_company ? COMPANY_RATE_LOCATOR    : PROFILE_RATE_LOCATOR))
+      name:         get_element_text((is_company ? COMPANY_NAME_LOCATOR    : PROFILE_NAME_LOCATOR)),
+      title:        get_element_text((is_company ? COMPANY_TITLE_LOCATOR   : PROFILE_TITLE_LOCATOR)),
+      country:      get_element_text((is_company ? COMPANY_COUNTRY_LOCATOR : PROFILE_COUNTRY_LOCATOR)),
+      rate:         get_element_text((is_company ? COMPANY_RATE_LOCATOR    : PROFILE_RATE_LOCATOR)),
+      skills:       get_profile_skills
     }
   end
 
+  # Checks for keyword on profile attributes
   def verify_keyword_on_profile(keyword)
     Log.step "Verifying all attributes on Profile Page for matching keyword: #{keyword}"
     verify_profiles_with_keyword @profile, keyword
+  end
+
+  # Return a array with the profile skills
+  def get_profile_skills
+    profile_skills = find_elements PROFILE_SKILLS_LOCATOR
+    get_skills profile_skills
   end
 
   # Returns true(bool) if the current profile page
