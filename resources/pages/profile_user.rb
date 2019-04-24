@@ -22,11 +22,13 @@ class ProfileUser < BasePage
   PROFILE_COUNTRY_LOCATOR       = { css: '#optimizely-header-container-default > div.row.m-lg-bottom > div.col-xs-12.col-sm-8.col-md-9.col-lg-10 > div > div.media-body > div.fe-profile-header-local-time > fe-profile-map > span > ng-transclude > fe-profile-location-label > span.w-700 > span:nth-child(2)' }.freeze
   PROFILE_RATE_LOCATOR          = { css: '#optimizely-header-container-default > div.m-lg-top.cfe-aggregates > ul > li:nth-child(1) > div.up-active-container.ng-scope > div > h3 > cfe-profile-rate > span > span' }.freeze
   PROFILE_SKILLS_LOCATOR        = { css: 'div.o-profile-skills a' }.freeze
+  PROFILE_DESCRIPTION_LOCATOR   = { css: 'o-profile-overview:nth-child(1) p[itemprop="description"] span[ng-show="!open"]:nth-child(1)' }.freeze
 
   GENERAL_PROFILE_BUTTON_LOCATOR = { css: 'button[data-ng-click="$ctrl.selectGeneralProfile()"]' }.freeze
 
   COMPANY_NAME_LOCATOR          = { css: '#main > div.ng-scope > div > div > div.row > div.col-md-9 > div > div.air-card.m-0-top-bottom > div.media > div.media-body > h2' }.freeze
   COMPANY_TITLE_LOCATOR         = { css: '#main > div.ng-scope > div > div > div.row > div.col-md-9 > div > div.air-card.m-0-top-bottom > h3' }.freeze
+  COMPANY_DESCRIPTION_LOCATOR   = { css: 'div[data-ng-if="vm.profile.description"] span.ng-scope' }.freeze
   COMPANY_COUNTRY_LOCATOR       = { css: '#main > div.ng-scope > div > div > div.row > div.col-md-9 > div > div.air-card.m-0-top-bottom > div.media > div.media-body > div.m-sm-bottom > strong' }.freeze
   COMPANY_RATE_LOCATOR          = { css: '#main > div.ng-scope > div > div > div.row > div.col-md-9 > div > div.air-card.m-0-top-bottom > div.row > div:nth-child(1) > h4 > span' }.freeze
 
@@ -56,6 +58,12 @@ class ProfileUser < BasePage
         next
       end
 
+      # Makes a specific comparison for the description
+      if key == :description
+        compare_profile_description profile_from_search[key], value
+        next
+      end
+
       # Compare the attributes
       if value == profile_from_search[key]
         message = "The attribute '#{key}' matches the one shown in the search"
@@ -66,6 +74,27 @@ class ProfileUser < BasePage
       Log.info message
     end
 
+  end
+
+  # Check if the profile description contains the profile search description
+  def compare_profile_description(search_description, profile_description)
+    message = "The attribute 'Description' don't match"
+
+    # remove the last three dots in the end of the search description
+    # for comparison
+    search_description  = search_description.gsub('...', '')
+
+    # TODO: maybe add this to longer pieces of text
+    # profile_description = profile_description.gsub("\n", " ")
+
+    # puts "profile_description [ #{profile_description}"
+    # puts "search_description  [ #{search_description}"
+
+    if profile_description.include? search_description
+      message = "The attribute 'Description' on the profile contains the piece that is displayed at the search page"
+    end
+
+    Log.info message
   end
 
   # Compare skills between the profile and search page
@@ -94,6 +123,7 @@ class ProfileUser < BasePage
     {
       name:         get_element_text((is_company ? COMPANY_NAME_LOCATOR    : PROFILE_NAME_LOCATOR)),
       title:        get_element_text((is_company ? COMPANY_TITLE_LOCATOR   : PROFILE_TITLE_LOCATOR)),
+      description:  get_element_text((is_company ? COMPANY_DESCRIPTION_LOCATOR : PROFILE_DESCRIPTION_LOCATOR)),
       country:      get_element_text((is_company ? COMPANY_COUNTRY_LOCATOR : PROFILE_COUNTRY_LOCATOR)),
       rate:         get_element_text((is_company ? COMPANY_RATE_LOCATOR    : PROFILE_RATE_LOCATOR)),
       skills:       get_profile_skills

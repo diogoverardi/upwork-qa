@@ -20,8 +20,8 @@ class ProfilesBrowse < BasePage
   PROFILE_COUNTRY_LOCATOR       = { css: 'div.freelancer-tile-location strong.d-md-inline-block' }.freeze
   PROFILE_RATE_LOCATOR          = { css: 'div[data-freelancer-rate] > strong.pull-left' }.freeze
   PROFILE_CARD_SECTION_LOCATOR  = { css: '#oContractorResults > div > div > section.air-card-hover' }.freeze
-  PROFILE_SKILLS_LOCATOR        = { css: 'div.skills-section li span' }
-
+  PROFILE_SKILLS_LOCATOR        = { css: 'div.skills-section li span' }.freeze
+  PROFILE_DESCRIPTION_LOCATOR   = { css: 'div.d-lg-block > p.freelancer-tile-description' }.freeze
 
   # Goes through each search result,
   # gets the desirable data and
@@ -36,6 +36,7 @@ class ProfilesBrowse < BasePage
         {
           name:         get_element_text(PROFILE_NAME_LOCATOR, profile),
           title:        get_element_text(PROFILE_TITLE_LOCATOR, profile),
+          description:  get_element_text(PROFILE_DESCRIPTION_LOCATOR, profile),
           country:      get_element_text(PROFILE_COUNTRY_LOCATOR, profile),
           rate:         get_element_text(PROFILE_RATE_LOCATOR, profile),
           skills:       get_profile_skills(profile)
