@@ -36,6 +36,7 @@ class BasePage
   end
 
   # Find an element by it's locator
+  # wrapper can be either the whole browser or just a specific web-element
   def find(locator, wrapper = nil)
     # @browser.find_element locator
     (wrapper ? wrapper : @browser).find_element locator
@@ -43,8 +44,8 @@ class BasePage
 
   # Find multiples elements by it's given locator
   # and returns it
-  def find_elements(locator)
-    @browser.find_elements locator
+  def find_elements(locator, wrapper = nil)
+    (wrapper ? wrapper : @browser).find_elements locator
   end
 
   # Stop the script execution by a given time(seconds)
@@ -69,6 +70,16 @@ class BasePage
   def quit
     @browser.quit
     Log.step 'Closing the browser...'
+  end
+
+  # Return True if the element is displayed
+  # False otherwise
+  def is_displayed(locator)
+    begin
+      find(locator).displayed?
+    rescue Selenium::WebDriver::Error::NoSuchElementError
+      false
+    end
   end
 
 end
